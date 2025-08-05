@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 智能升学择校辅助系统
 
 基于Django的轻量级智能升学择校辅助系统，帮助学生选择适合的院校和专业。
@@ -113,3 +114,7 @@ haolaoshi/
 ├── manage.py               # Django管理脚本
 └── README.md               # 项目说明文档
 ```
+=======
+# haolaoshi
+智能考研择校推荐系统
+>>>>>>> 393dbfdfd03e65dc4b5061f293323caa78bad1ad
