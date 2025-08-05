@@ -1,0 +1,619 @@
+{% extends 'base.html' %}
+
+{% block title %}AI大数据择校 - 智能升学择校辅助系统{% endblock %}
+
+{% block extra_css %}
+<style>
+    .step-item {
+        position: relative;
+        padding-bottom: 30px;
+    }
+    .step-item:not(:last-child):before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 30px;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    .step-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .form-section {
+        border-left: 4px solid #007bff;
+        padding-left: 15px;
+        margin-bottom: 25px;
+    }
+    .form-section h5 {
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+    .custom-switch-lg .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+    }
+    .custom-switch-lg .form-check-label {
+        padding-left: 0.5rem;
+        padding-top: 0.2rem;
+    }
+    .recommendation-tag {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .recommendation-tag:hover {
+        background-color: #f8f9fa;
+        border-color: #007bff;
+    }
+    .recommendation-tag.active {
+        background-color: #e9f2ff;
+        border-color: #007bff;
+        color: #007bff;
+    }
+    .form-banner {
+        background: linear-gradient(135deg, #3a8bfe, #1357dd);
+        border-radius: 10px;
+        padding: 20px;
+        color: white;
+        margin-bottom: 25px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AI大数据择校</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- 顶部横幅 -->
+        <div class="form-banner mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="mb-2"><i class="bi bi-stars me-2"></i>AI大数据择校分析</h3>
+                    <p class="mb-0">
+                        智能系统将分析您的学业情况、兴趣特长以及目标院校类型，为您提供最匹配的考研院校和专业推荐，助您圆梦理想学府。
+                    </p>
+                </div>
+                <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                    <img src="https://img.icons8.com/fluency/96/000000/artificial-intelligence.png" alt="AI" width="80">
+                </div>
+            </div>
+        </div>
+        
+        <!-- 步骤指南 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">择校流程指南</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex step-item">
+                            <div class="step-icon">1</div>
+                            <div>
+                                <h6 class="mb-1">填写个人信息</h6>
+                                <p class="text-muted small mb-0">提供您的学业背景、成绩和目标信息</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex step-item">
+                            <div class="step-icon">2</div>
+                            <div>
+                                <h6 class="mb-1">AI智能分析</h6>
+                                <p class="text-muted small mb-0">系统分析匹配度，生成院校专业推荐</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex step-item">
+                            <div class="step-icon">3</div>
+                            <div>
+                                <h6 class="mb-1">获取备考方案</h6>
+                                <p class="text-muted small mb-0">基于推荐结果获取个性化备考指导</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 表单 -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">填写择校信息</h4>
+            </div>
+            <div class="card-body p-4">                
+                <form method="post" id="aiRecommendationForm">
+                    {% csrf_token %}
+                    
+                    <!-- 基本信息部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-person-circle me-2"></i>基本信息</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">{{ form.name.label }} <span class="text-danger">*</span></label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">{{ form.gender.label }}</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.gender.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.province.id_for_label }}" class="form-label fw-bold">{{ form.province.label }} <span class="text-danger">*</span></label>
+                                {{ form.province }}
+                                {% if form.province.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.province.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 学业情况部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-mortarboard me-2"></i>学业情况</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.current_school.id_for_label }}" class="form-label fw-bold">{{ form.current_school.label }} <span class="text-danger">*</span></label>
+                                {{ form.current_school }}
+                                {% if form.current_school.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.current_school.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.current_major.id_for_label }}" class="form-label fw-bold">{{ form.current_major.label }} <span class="text-danger">*</span></label>
+                                {{ form.current_major }}
+                                {% if form.current_major.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.current_major.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.grade_rank.id_for_label }}" class="form-label fw-bold">{{ form.grade_rank.label }} <span class="text-danger">*</span></label>
+                                {{ form.grade_rank }}
+                                <div class="form-text">您在专业内的成绩排名情况，影响择校推荐精准度</div>
+                                {% if form.grade_rank.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.grade_rank.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.academic_status.id_for_label }}" class="form-label fw-bold">{{ form.academic_status.label }} <span class="text-danger">*</span></label>
+                                {{ form.academic_status }}
+                                {% if form.academic_status.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.academic_status.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 考研规划部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-calendar-check me-2"></i>考研规划</h5>
+                        <div id="exam-plan-info" class="mb-3"></div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.exam_year.id_for_label }}" class="form-label fw-bold">{{ form.exam_year.label }} <span class="text-danger">*</span></label>
+                                <div class="alert alert-info py-2">
+                                    <small><i class="bi bi-info-circle-fill me-1"></i> 今天日期：{{ today|date:"Y年m月d日" }}，推荐考研年份：{{ current_year|add:"1" }}年-{{ current_year|add:"2" }}年</small>
+                                </div>
+                                <div class="d-flex">
+                                    {% for year in exam_years %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input exam-year-radio" 
+                                               type="radio" 
+                                               name="exam_year_radio" 
+                                               id="exam_year_{{ year }}" 
+                                               value="{{ year }}" 
+                                               {% if form.exam_year.value == year %}checked{% endif %}>
+                                        <label class="form-check-label" for="exam_year_{{ year }}">{{ year }}年</label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {{ form.exam_year }}
+                                <div class="form-text">选择您计划参加的考研年份（{{ current_year|add:"1" }}年考试时间为{{ current_year }}年底实施）</div>
+                                {% if form.exam_year.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.exam_year.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.study_mode.id_for_label }}" class="form-label fw-bold">{{ form.study_mode.label }} <span class="text-danger">*</span></label>
+                                {{ form.study_mode }}
+                                {% if form.study_mode.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.study_mode.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 目标偏好部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-bullseye me-2"></i>目标偏好</h5>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">热门目标专业 <span class="text-danger">*</span></label>
+                            <div class="row">
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="计算机科学与技术">
+                                        计算机科学与技术
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="金融学">
+                                        金融学
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="人工智能">
+                                        人工智能
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="会计学">
+                                        会计学
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="法学">
+                                        法学
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="临床医学">
+                                        临床医学
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="经济学">
+                                        经济学
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                    <div class="card recommendation-tag p-2 text-center" data-value="电子信息工程">
+                                        电子信息工程
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label for="{{ form.target_major_category.id_for_label }}" class="form-label">自定义专业:</label>
+                                {{ form.target_major_category }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.target_type.id_for_label }}" class="form-label fw-bold">{{ form.target_type.label }} <span class="text-danger">*</span></label>
+                                {{ form.target_type }}
+                                {% if form.target_type.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.target_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.target_city.id_for_label }}" class="form-label fw-bold">{{ form.target_city.label }}</label>
+                                {{ form.target_city }}
+                                <div class="form-text">如有地域偏好，请填写您希望就读的城市</div>
+                                {% if form.target_city.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.target_city.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 个人情况部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-person-lines-fill me-2"></i>个人情况</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.interests.id_for_label }}" class="form-label fw-bold">{{ form.interests.label }}</label>
+                            {{ form.interests }}
+                            <div class="form-text">您的兴趣爱好将有助于我们推荐更匹配的专业</div>
+                            {% if form.interests.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.interests.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.career_goals.id_for_label }}" class="form-label fw-bold">{{ form.career_goals.label }}</label>
+                            {{ form.career_goals }}
+                            <div class="form-text">您的职业规划有助于我们提供更准确的建议</div>
+                            {% if form.career_goals.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.career_goals.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- 职业方向和策略部分 -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-briefcase me-2"></i>职业方向和策略</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.career_direction.id_for_label }}" class="form-label fw-bold">{{ form.career_direction.label }} <span class="text-danger">*</span></label>
+                                {{ form.career_direction }}
+                                <div class="form-text">您的职业方向将影响我们的院校推荐</div>
+                                {% if form.career_direction.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.career_direction.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.strategy_preference.id_for_label }}" class="form-label fw-bold">{{ form.strategy_preference.label }} <span class="text-danger">*</span></label>
+                                {{ form.strategy_preference }}
+                                <div class="form-text">选择您的择校策略偏好</div>
+                                {% if form.strategy_preference.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.strategy_preference.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.economic_condition.id_for_label }}" class="form-label fw-bold">{{ form.economic_condition.label }} <span class="text-danger">*</span></label>
+                                {{ form.economic_condition }}
+                                <div class="form-text">您的经济条件将帮助我们推荐更合适的院校</div>
+                                {% if form.economic_condition.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.economic_condition.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> 返回首页
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search me-1"></i> 开始智能分析
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 处理专业标签点击
+        const recommendationTags = document.querySelectorAll('.recommendation-tag');
+        const targetMajorInput = document.getElementById('{{ form.target_major_category.id_for_label }}');
+        
+        recommendationTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                targetMajorInput.value = value;
+                
+                // 移除所有标签的激活状态
+                recommendationTags.forEach(t => t.classList.remove('active'));
+                
+                // 为当前标签添加激活状态
+                this.classList.add('active');
+            });
+        });
+        
+        // 处理考研年份单选框
+        const examYearRadios = document.querySelectorAll('input[name="exam_year_radio"]');
+        const examYearInput = document.getElementById('{{ form.exam_year.id_for_label }}');
+        
+        examYearRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if(this.checked) {
+                    examYearInput.value = this.value;
+                    
+                    // 更新考研计划信息
+                    updateExamPlanInfo(parseInt(this.value));
+                }
+            });
+        });
+        
+        // 设置默认考研年份
+        const checkedRadio = document.querySelector('input[name="exam_year_radio"]:checked');
+        if (checkedRadio) {
+            examYearInput.value = checkedRadio.value;
+            
+            // 显示对应年份的考研时间安排
+            updateExamPlanInfo(parseInt(checkedRadio.value));
+        }
+        
+        // 处理表单提交验证
+        const form = document.getElementById('aiRecommendationForm');
+        form.addEventListener('submit', function(event) {
+            // 阻止表单默认提交行为，改用Ajax提交
+            event.preventDefault();
+            const requiredFields = [
+                'name',
+                'province',
+                'current_school',
+                'current_major',
+                'grade_rank',
+                'academic_status',
+                'exam_year',
+                'study_mode',
+                'target_major_category',
+                'target_type',
+                'career_direction',
+                'economic_condition',
+                'strategy_preference'
+            ];
+            
+            let hasError = false;
+            
+            requiredFields.forEach(field => {
+                const input = document.getElementById(`id_${field}`);
+                if (!input.value) {
+                    hasError = true;
+                    input.classList.add('is-invalid');
+                    
+                    // 创建错误提示
+                    let errorDiv = input.nextElementSibling;
+                    if (!errorDiv || !errorDiv.classList.contains('text-danger')) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.classList.add('text-danger');
+                        errorDiv.textContent = '此字段不能为空';
+                        input.parentNode.insertBefore(errorDiv, input.nextSibling);
+                    }
+                } else {
+                    input.classList.remove('is-invalid');
+                    
+                    // 移除错误提示
+                    let errorDiv = input.nextElementSibling;
+                    if (errorDiv && errorDiv.classList.contains('text-danger')) {
+                        errorDiv.remove();
+                    }
+                }
+            });
+            
+            if (hasError) {
+                window.scrollTo(0, 0);
+                return; // 如果有错误，停止提交
+            }
+            
+            // 显示加载状态
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 分析中...';
+            
+            // 使用表单数据进行提交
+            const formData = new FormData(form);
+            // 确保CSRF令牌被包含
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应错误');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // 成功提交后，显示结果页面
+                document.documentElement.innerHTML = html;
+                window.scrollTo(0, 0);
+                history.pushState({}, '', '{{ request.path }}');
+            })
+            .catch(error => {
+                console.error('提交错误:', error);
+                alert('提交出错，请重试');
+            })
+            .finally(() => {
+                // 恢复按钮状态
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            });
+        });
+        
+        // 更新考研计划信息函数
+        function updateExamPlanInfo(examYear) {
+            const examPlanInfo = document.getElementById('exam-plan-info');
+            if (examPlanInfo) {
+                const prevYear = examYear - 1;
+                examPlanInfo.innerHTML = `
+                    <div class="alert alert-light border">
+                        <h6 class="alert-heading fw-bold"><i class="bi bi-calendar-event me-2"></i>${examYear}年考研时间安排</h6>
+                        <ul class="small mb-0">
+                            <li><strong>初试时间：</strong>${prevYear}年12月23-24日</li>
+                            <li><strong>复试时间：</strong>${examYear}年3月中下旬</li>
+                            <li><strong>录取通知：</strong>${examYear}年4-5月</li>
+                            <li><strong>入学时间：</strong>${examYear}年9月</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+    });
+</script>
+{% endblock %}

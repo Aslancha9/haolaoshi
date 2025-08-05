@@ -1,0 +1,666 @@
+{% extends 'base.html' %}
+
+{% block title %}AI大数据择校结果 - {{ student.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-header {
+        background: linear-gradient(135deg, #4b6cb7, #182848);
+        border-radius: 10px;
+        padding: 20px;
+        color: white;
+        margin-bottom: 25px;
+    }
+    .result-stats {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+    }
+    .card-school {
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .card-school:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .school-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+    .school-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .school-stat-item {
+        text-align: center;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+    }
+    .school-stat-value {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    .school-stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    .progress-lg {
+        height: 10px;
+    }
+    .study-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    .study-timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .timeline-dot {
+        position: absolute;
+        left: -30px;
+        top: 5px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+    }
+    .timeline-content {
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .major-badge {
+        margin-right: 5px;
+        margin-bottom: 5px;
+        white-space: normal;
+    }
+    .match-score-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 15px;
+    }
+    .match-excellent {
+        background-color: #d1e7dd;
+        color: #146c43;
+    }
+    .match-good {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+    .match-fair {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'ai_recommendation_form' %}">AI大数据择校</a></li>
+            <li class="breadcrumb-item active" aria-current="page">推荐结果</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- 结果头部 -->
+<div class="result-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h3 class="mb-2"><i class="bi bi-award me-2"></i>{{ student.name }} 的智能择校分析报告</h3>
+            <p class="mb-0">
+                我们的AI系统已根据您的学业背景、专业排名及目标偏好完成分析，为您精选出最匹配的院校和专业推荐。
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <button class="btn btn-light" onclick="window.print()">
+                <i class="bi bi-printer me-2"></i>打印报告
+            </button>
+            <button class="btn btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#shareModal">
+                <i class="bi bi-share me-2"></i>分享
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- 调试信息 -->
+        <div class="alert alert-info">
+            <p><strong>调试信息：</strong></p>
+            <p>推荐结果数据类型：{{ result|length }}</p>
+            <p>推荐键：{% for key in result.keys %}{{ key }} {% endfor %}</p>
+            <p>推荐结果数量：{% if result.recommendations %}{{ result.recommendations|length }}{% else %}无推荐结果{% endif %}</p>
+        </div>
+        
+        <!-- 推荐院校卡片 -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="bi bi-building me-2"></i>推荐院校</h4>
+                <div>
+                    <span class="badge bg-success me-1">保底院校</span>
+                    <span class="badge bg-primary me-1">匹配院校</span>
+                    <span class="badge bg-danger">冲刺院校</span>
+                </div>
+            </div>
+            
+            {% for rec in result.recommendations %}
+                {% if rec.category == 'safety' %}
+                    <div class="card card-school border-0 shadow-sm">
+                        <div class="school-badge">
+                            <span class="badge bg-success">保底院校</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div>
+                                            {% if rec.school.is_985 %}<span class="badge bg-danger me-1">985</span>{% endif %}
+                                            {% if rec.school.is_211 %}<span class="badge bg-info me-1">211</span>{% endif %}
+                                            {% if rec.school.is_double_first_class %}<span class="badge bg-warning text-dark">双一流</span>{% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="mb-2 text-muted"><i class="bi bi-geo-alt me-1"></i>{{ rec.school.province }}</p>
+                                    
+                                    <div class="school-stats">
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.match_score|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">匹配度</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.admission_probability|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">录取概率</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.school.score }}</div>
+                                            <div class="school-stat-label">分数线</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 推荐理由 -->
+                                    <div>
+                                        <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-1"></i>{{ rec.reason }}</p>
+                                    </div>
+                                    
+                                    <!-- 推荐专业 -->
+                                    {% if rec.recommended_majors %}
+                                    <div>
+                                        <small class="text-muted">推荐专业:</small>
+                                        <div>
+                                            {% for major in rec.recommended_majors %}
+                                                <span class="badge bg-light text-dark major-badge">{{ major.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="match-score-circle match-excellent">
+                                        {{ rec.match_score|floatformat:0 }}%
+                                    </div>
+                                    <a href="#" class="btn btn-sm btn-outline-success w-100 mb-2">查看详情</a>
+                                    <a href="{{ rec.school.website }}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">访问官网</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            
+            {% for rec in result.recommendations %}
+                {% if rec.category == 'match' %}
+                    <div class="card card-school border-0 shadow-sm">
+                        <div class="school-badge">
+                            <span class="badge bg-primary">匹配院校</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div>
+                                            {% if rec.school.is_985 %}<span class="badge bg-danger me-1">985</span>{% endif %}
+                                            {% if rec.school.is_211 %}<span class="badge bg-info me-1">211</span>{% endif %}
+                                            {% if rec.school.is_double_first_class %}<span class="badge bg-warning text-dark">双一流</span>{% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="mb-2 text-muted"><i class="bi bi-geo-alt me-1"></i>{{ rec.school.province }}</p>
+                                    
+                                    <div class="school-stats">
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.match_score|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">匹配度</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.admission_probability|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">录取概率</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.school.score }}</div>
+                                            <div class="school-stat-label">分数线</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 推荐理由 -->
+                                    <div>
+                                        <p class="mb-2"><i class="bi bi-check-circle-fill text-primary me-1"></i>{{ rec.reason }}</p>
+                                    </div>
+                                    
+                                    <!-- 推荐专业 -->
+                                    {% if rec.recommended_majors %}
+                                    <div>
+                                        <small class="text-muted">推荐专业:</small>
+                                        <div>
+                                            {% for major in rec.recommended_majors %}
+                                                <span class="badge bg-light text-dark major-badge">{{ major.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="match-score-circle match-good">
+                                        {{ rec.match_score|floatformat:0 }}%
+                                    </div>
+                                    <a href="#" class="btn btn-sm btn-outline-primary w-100 mb-2">查看详情</a>
+                                    <a href="{{ rec.school.website }}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">访问官网</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            
+            {% for rec in result.recommendations %}
+                {% if rec.category == 'challenge' %}
+                    <div class="card card-school border-0 shadow-sm">
+                        <div class="school-badge">
+                            <span class="badge bg-danger">冲刺院校</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div>
+                                            {% if rec.school.is_985 %}<span class="badge bg-danger me-1">985</span>{% endif %}
+                                            {% if rec.school.is_211 %}<span class="badge bg-info me-1">211</span>{% endif %}
+                                            {% if rec.school.is_double_first_class %}<span class="badge bg-warning text-dark">双一流</span>{% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="mb-2 text-muted"><i class="bi bi-geo-alt me-1"></i>{{ rec.school.province }}</p>
+                                    
+                                    <div class="school-stats">
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.match_score|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">匹配度</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.admission_probability|floatformat:0 }}%</div>
+                                            <div class="school-stat-label">录取概率</div>
+                                        </div>
+                                        <div class="school-stat-item">
+                                            <div class="school-stat-value">{{ rec.school.score }}</div>
+                                            <div class="school-stat-label">分数线</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 推荐理由 -->
+                                    <div>
+                                        <p class="mb-2"><i class="bi bi-exclamation-circle-fill text-danger me-1"></i>{{ rec.reason }}</p>
+                                    </div>
+                                    
+                                    <!-- 推荐专业 -->
+                                    {% if rec.recommended_majors %}
+                                    <div>
+                                        <small class="text-muted">推荐专业:</small>
+                                        <div>
+                                            {% for major in rec.recommended_majors %}
+                                                <span class="badge bg-light text-dark major-badge">{{ major.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="match-score-circle match-fair">
+                                        {{ rec.match_score|floatformat:0 }}%
+                                    </div>
+                                    <a href="#" class="btn btn-sm btn-outline-danger w-100 mb-2">查看详情</a>
+                                    <a href="{{ rec.school.website }}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">访问官网</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <!-- 考研备考计划 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>个性化备考计划</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success mb-4">
+                    <h6 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>考研规划建议</h6>
+                    <p class="mb-0">
+                        根据您的专业背景和目标院校特点，我们为您定制了以下备考计划。请根据自身情况适当调整，并保持学习的持续性和针对性。以下是本次考研及有3年内考研的时间规划。
+                    </p>
+                </div>
+                
+                <!-- 三年内考研计划 -->
+                <div class="alert alert-info mb-4">
+                    <h6 class="alert-heading"><i class="bi bi-calendar-date me-2"></i>3年内考研时间安排</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card border-primary mb-2">
+                                <div class="card-header bg-primary text-white">
+                                    <strong>{{ student.exam_year }}年考研</strong> (选择的年份)
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li><i class="bi bi-calendar-check me-1"></i> 初试时间：{{ student.exam_year|add:"-1" }}年 12月 23-24日</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 复试时间：{{ student.exam_year }}年 3月中下旬</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 录取通知：{{ student.exam_year }}年 4-5月</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 入学时间：{{ student.exam_year }}年 9月</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-info mb-2">
+                                <div class="card-header bg-info text-white">
+                                    <strong>{{ student.exam_year|add:"1" }}年考研</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li><i class="bi bi-calendar-check me-1"></i> 初试时间：{{ student.exam_year }}年 12月 23-24日</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 复试时间：{{ student.exam_year|add:"1" }}年 3月中下旬</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 录取通知：{{ student.exam_year|add:"1" }}年 4-5月</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 入学时间：{{ student.exam_year|add:"1" }}年 9月</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-secondary mb-2">
+                                <div class="card-header bg-secondary text-white">
+                                    <strong>{{ student.exam_year|add:"2" }}年考研</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li><i class="bi bi-calendar-check me-1"></i> 初试时间：{{ student.exam_year|add:"1" }}年 12月 23-24日</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 复试时间：{{ student.exam_year|add:"2" }}年 3月中下旬</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 录取通知：{{ student.exam_year|add:"2" }}年 4-5月</li>
+                                        <li><i class="bi bi-calendar-check me-1"></i> 入学时间：{{ student.exam_year|add:"2" }}年 9月</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="study-timeline mb-4">
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-primary"></div>
+                        <div class="timeline-content bg-primary-light">
+                            <h6 class="mb-1">基础阶段 (即日起 - {{ student.exam_year|add:"-1" }}年8月)</h6>
+                            <ul class="mb-0">
+                                <li>熟悉考研大纲和参考书目</li>
+                                <li>制定详细的学习计划，合理分配各科学习时间</li>
+                                <li>重点强化英语词汇和阅读能力</li>
+                                <li>系统复习数学基础知识点</li>
+                                <li>了解专业课考察范围和重点</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-warning"></div>
+                        <div class="timeline-content bg-warning-light">
+                            <h6 class="mb-1">强化阶段 ({{ student.exam_year|add:"-1" }}年9月 - 10月)</h6>
+                            <ul class="mb-0">
+                                <li>开始做真题和模拟题，查漏补缺</li>
+                                <li>重点复习政治知识点，关注时事政治</li>
+                                <li>专业课深度学习，掌握核心概念和理论</li>
+                                <li>开始练习英语翻译和写作</li>
+                                <li>数学重点突破难点题型</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-danger"></div>
+                        <div class="timeline-content bg-danger-light">
+                            <h6 class="mb-1">冲刺阶段 ({{ student.exam_year|add:"-1" }}年11月 - 12月)</h6>
+                            <ul class="mb-0">
+                                <li>全真模拟考试，强化答题手感</li>
+                                <li>政治背诵重点和大题预测</li>
+                                <li>专业课综合串讲和重点记忆</li>
+                                <li>英语完形和阅读理解专项训练</li>
+                                <li>调整作息，保持良好的身心状态</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">重点复习建议</h6>
+                        <ul>
+                            <li>根据专业排名情况，建议加强<strong>{{ student.target_major_category }}</strong>方向的专业课复习</li>
+                            <li>针对目标院校的专业要求，着重提升学科基础理论水平</li>
+                            <li>对于复习弱项，建议每天固定时间段集中攻破</li>
+                            <li>利用"划重点"等方法，提高复习效率</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">学习资源推荐</h6>
+                        <ul>
+                            <li>《{{ student.target_major_category }}考研大纲解析》</li>
+                            <li>《考研英语词汇速记与应用大全》</li>
+                            <li>《考研政治核心考点与真题解析》</li>
+                            <li>《考研数学基础过关660题》</li>
+                            <li>各目标院校近五年真题集</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- 学生信息卡片 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>考生信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="avatar mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 4rem; color: #6c757d;"></i>
+                    </div>
+                    <h5 class="mb-1">{{ student.name }}</h5>
+                    <p class="text-muted mb-0">{{ student.current_school }} | {{ student.current_major }}</p>
+                </div>
+                
+                <div class="result-stats mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="small text-muted">专业排名</div>
+                            <div class="fw-bold">{{ student.get_grade_rank_display }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted">学业状态</div>
+                            <div class="fw-bold">{{ student.get_academic_status_display }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>考研计划</span>
+                        <span class="badge bg-primary">{{ student.exam_year }}年</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>就读方式</span>
+                        <span class="badge bg-info text-dark">{{ student.get_study_mode_display }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>目标专业</span>
+                        <span class="badge bg-success">{{ student.target_major_category }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>目标院校类型</span>
+                        <span class="badge bg-warning text-dark">{{ student.get_target_type_display }}</span>
+                    </div>
+                    {% if student.target_city %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>目标城市</span>
+                        <span class="badge bg-secondary">{{ student.target_city }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- 考研资料推荐 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-book me-2"></i>考研资料推荐</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-2">公共课资料</h6>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>考研政治大纲解析</span>
+                        <span class="badge bg-primary rounded-pill">必备</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>考研英语词汇手册</span>
+                        <span class="badge bg-primary rounded-pill">必备</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>考研数学历年真题解析</span>
+                        <span class="badge bg-primary rounded-pill">必备</span>
+                    </li>
+                </ul>
+                
+                <h6 class="mb-2">专业课资料</h6>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ student.target_major_category }}专业考研指南</span>
+                        <span class="badge bg-success rounded-pill">推荐</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>历年{{ student.target_major_category }}真题集</span>
+                        <span class="badge bg-danger rounded-pill">核心</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ student.target_major_category }}专业课复习精要</span>
+                        <span class="badge bg-success rounded-pill">推荐</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer bg-transparent text-center">
+                <a href="#" class="btn btn-sm btn-outline-danger">获取更多资料推荐</a>
+            </div>
+        </div>
+        
+        <!-- 快速操作 -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">快速操作</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'student_detail' student.id %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-person-lines-fill text-primary me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">完整个人信息</h6>
+                            <small class="text-muted">查看详细个人数据和历史推荐</small>
+                        </div>
+                    </a>
+                    <a href="{% url 'ai_recommendation_form' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-arrow-repeat text-success me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">重新推荐</h6>
+                            <small class="text-muted">调整推荐参数，获取更多匹配结果</small>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-file-earmark-pdf text-danger me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">下载PDF报告</h6>
+                            <small class="text-muted">获取完整分析报告的PDF版本</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 分享模态框 -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel">分享推荐结果</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center gap-3 mb-3">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-wechat"></i> 微信
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-chat-dots"></i> QQ
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-envelope"></i> 邮件
+                    </button>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" value="https://example.com/share/12345" readonly>
+                    <button class="btn btn-outline-secondary" type="button">复制</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 激活Bootstrap工具提示
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script>
+{% endblock %}

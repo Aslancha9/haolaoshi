@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}推荐结果 - {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'student_list' %}">学生管理</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'student_detail' student.id %}">{{ student.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">推荐结果</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ student.name }} 的院校推荐结果</h4>
+            <span class="badge bg-light text-dark">{{ strategy }}</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="ps-0" style="width: 120px;">姓名:</th>
+                            <td>{{ student.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="ps-0">所在省份:</th>
+                            <td>{{ student.province }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="ps-0">教育路径:</th>
+                            <td>{{ student.education_path }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="ps-0" style="width: 120px;">总分:</th>
+                            <td>{{ student.total_score }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="ps-0">位次:</th>
+                            <td>{{ student.rank|default:"暂无" }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="ps-0">兴趣方向:</th>
+                            <td>{{ student.interests|default:"暂无" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <h5 class="mb-3">推荐院校</h5>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">保底院校</h5>
+                        <small>把握较大，相对安全的选择</small>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for rec in result.recommendations %}
+                                {% if rec.category == 'safety' %}
+                                    <div class="list-group-item">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">{{ rec.school.province }}</small>
+                                            <span class="badge bg-success rounded-pill">匹配度: {{ rec.match_score|floatformat:1 }}%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small>录取分数线: {{ rec.school.score }}</small>
+                                            <small class="text-success">录取概率: {{ rec.admission_probability|floatformat:0 }}%</small>
+                                        </div>
+                                        {% if rec.recommended_majors %}
+                                            <div class="mt-2">
+                                                <small class="text-muted">推荐专业:</small>
+                                                <div>
+                                                    {% for major in rec.recommended_majors %}
+                                                        <span class="badge bg-light text-dark me-1">{{ major.name }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="mt-2">
+                                            <small class="text-muted">推荐理由: {{ rec.reason }}</small>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">匹配院校</h5>
+                        <small>与您的分数和能力较为匹配的选择</small>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for rec in result.recommendations %}
+                                {% if rec.category == 'match' %}
+                                    <div class="list-group-item">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">{{ rec.school.province }}</small>
+                                            <span class="badge bg-primary rounded-pill">匹配度: {{ rec.match_score|floatformat:1 }}%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small>录取分数线: {{ rec.school.score }}</small>
+                                            <small class="text-primary">录取概率: {{ rec.admission_probability|floatformat:0 }}%</small>
+                                        </div>
+                                        {% if rec.recommended_majors %}
+                                            <div class="mt-2">
+                                                <small class="text-muted">推荐专业:</small>
+                                                <div>
+                                                    {% for major in rec.recommended_majors %}
+                                                        <span class="badge bg-light text-dark me-1">{{ major.name }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="mt-2">
+                                            <small class="text-muted">推荐理由: {{ rec.reason }}</small>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">冲刺院校</h5>
+                        <small>具有挑战性，需要额外努力</small>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for rec in result.recommendations %}
+                                {% if rec.category == 'challenge' %}
+                                    <div class="list-group-item">
+                                        <h5 class="mb-1">{{ rec.school.name }}</h5>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">{{ rec.school.province }}</small>
+                                            <span class="badge bg-danger rounded-pill">匹配度: {{ rec.match_score|floatformat:1 }}%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small>录取分数线: {{ rec.school.score }}</small>
+                                            <small class="text-danger">录取概率: {{ rec.admission_probability|floatformat:0 }}%</small>
+                                        </div>
+                                        {% if rec.recommended_majors %}
+                                            <div class="mt-2">
+                                                <small class="text-muted">推荐专业:</small>
+                                                <div>
+                                                    {% for major in rec.recommended_majors %}
+                                                        <span class="badge bg-light text-dark me-1">{{ major.name }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="mt-2">
+                                            <small class="text-muted">推荐理由: {{ rec.reason }}</small>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="{% url 'student_detail' student.id %}" class="btn btn-secondary">返回学生详情</a>
+            <a href="{% url 'recommend_schools' student.id %}" class="btn btn-outline-primary">重新推荐</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

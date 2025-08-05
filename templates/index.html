@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能升学择校辅助系统</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="/static/css/main.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-primary text-white">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1 class="display-4">智能升学择校辅助系统</h1>
+                    <p class="lead">集成AI技术，为您的升学之路提供智能指引</p>
+                </div>
+                <div class="col-md-4 d-flex align-items-center justify-content-end">
+                    <a href="/register" class="btn btn-light me-2">注册</a>
+                    <a href="/login" class="btn btn-outline-light">登录</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>个性化升学规划</h2>
+                    <p>基于大语言模型和知识库的智能升学择校辅助系统，通过AI技术降低学生的备考难度，提升备考效率。</p>
+                    <a href="#services" class="btn btn-primary">了解更多</a>
+                </div>
+                <div class="col-md-6">
+                    <img src="/static/images/banner.jpg" alt="升学规划" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">核心功能</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">学员信息分析</h5>
+                            <p class="card-text">通过系统输入个人基本信息，多维度构建学员个人画像，包括学习能力评估、兴趣倾向分析、职业规划匹配等。</p>
+                            <a href="/student/profile" class="btn btn-sm btn-outline-primary">开始分析</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">院校选择与推荐</h5>
+                            <p class="card-text">基于学员画像和院校数据，通过智能推荐算法提供个性化院校推荐，支持冲刺、稳妥、保底梯度推荐。</p>
+                            <a href="/school/recommend" class="btn btn-sm btn-outline-primary">院校推荐</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">个性化备考建议</h5>
+                            <p class="card-text">结合学员学习进度、学科弱项与目标考试要求，生成个性化备考策略，提供全方位备考指导。</p>
+                            <a href="/study/plan" class="btn btn-sm btn-outline-primary">生成计划</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 mt-3">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">院校招录政策推荐</h5>
+                            <p class="card-text">依据目标院校发布的官方招生章程、考试指南及其他相关政策文件，精准提炼关键信息。</p>
+                            <a href="/policy/recommend" class="btn btn-sm btn-outline-primary">查看政策</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">录取分数线分析</h5>
+                            <p class="card-text">提供目标院校历年分数线、科目设置及趋势变化等数据，支持多维度对比分析。</p>
+                            <a href="/score/analysis" class="btn btn-sm btn-outline-primary">分数分析</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">院校对比工具</h5>
+                            <p class="card-text">支持多所学校横向比较，从多维度展示差异和特点，辅助决策。</p>
+                            <a href="/school/compare" class="btn btn-sm btn-outline-primary">开始对比</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">如何使用</h2>
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                        <h3>1</h3>
+                    </div>
+                    <h5 class="mt-3">信息录入</h5>
+                    <p>输入个人基本信息和学习情况</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                        <h3>2</h3>
+                    </div>
+                    <h5 class="mt-3">分析评估</h5>
+                    <p>AI系统分析学习能力与发展潜力</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                        <h3>3</h3>
+                    </div>
+                    <h5 class="mt-3">智能推荐</h5>
+                    <p>获取个性化院校和专业推荐</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                        <h3>4</h3>
+                    </div>
+                    <h5 class="mt-3">备考规划</h5>
+                    <p>生成详细学习计划和备考策略</p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/student/new" class="btn btn-lg btn-primary">立即开始</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>智能升学择校辅助系统</h5>
+                    <p>利用人工智能技术，提供个性化升学指导服务</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">关于我们</a></li>
+                        <li><a href="#" class="text-white">服务条款</a></li>
+                        <li><a href="#" class="text-white">隐私政策</a></li>
+                        <li><a href="#" class="text-white">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>联系方式</h5>
+                    <ul class="list-unstyled">
+                        <li>邮箱: contact@haolaoshi.com</li>
+                        <li>电话: 123-456-7890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>© 2023 智能升学择校辅助系统. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 引入Bootstrap JS和依赖项 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <!-- 自定义JS -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

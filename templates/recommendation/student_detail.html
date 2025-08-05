@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.name }} - 学生详情{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'student_list' %}">学生管理</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ student.name }}</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">学生信息</h4>
+                    <div>
+                        <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-light me-2">
+                            <i class="bi bi-pencil"></i> 编辑
+                        </a>
+                        <a href="{% url 'student_delete' student.id %}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> 删除
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="ps-0" style="width: 120px;">姓名:</th>
+                                    <td>{{ student.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">性别:</th>
+                                    <td>{{ student.gender|default:"未填写" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">所在省份:</th>
+                                    <td>{{ student.province }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">教育路径:</th>
+                                    <td>{{ student.education_path }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="ps-0" style="width: 120px;">创建时间:</th>
+                                    <td>{{ student.created_at|date:"Y-m-d H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">位次:</th>
+                                    <td>{{ student.rank|default:"未填写" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">兴趣爱好:</th>
+                                    <td>{{ student.interests|default:"未填写" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">职业规划:</th>
+                                    <td>{{ student.career_goals|default:"未填写" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3">成绩信息</h5>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>总分</th>
+                                    <th>语文</th>
+                                    <th>数学</th>
+                                    <th>英语</th>
+                                    <th>综合</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">{{ student.total_score|default:"-" }}</td>
+                                    <td>{{ student.chinese_score|default:"-" }}</td>
+                                    <td>{{ student.math_score|default:"-" }}</td>
+                                    <td>{{ student.english_score|default:"-" }}</td>
+                                    <td>{{ student.comprehensive_score|default:"-" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 学生推荐历史 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">历史推荐结果</h5>
+            </div>
+            <div class="card-body">
+                {% if recommendations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>院校名称</th>
+                                    <th>推荐专业</th>
+                                    <th>推荐类型</th>
+                                    <th>匹配度</th>
+                                    <th>录取概率</th>
+                                    <th>推荐时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rec in recommendations %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'school_detail' rec.school.id %}" class="text-decoration-none fw-bold">
+                                                {{ rec.school.name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ rec.major.name|default:"无" }}</td>
+                                        <td>
+                                            {% if rec.recommendation_type == "safety" %}
+                                                <span class="badge bg-success">保底</span>
+                                            {% elif rec.recommendation_type == "match" %}
+                                                <span class="badge bg-primary">匹配</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">冲刺</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ rec.match_score|floatformat:1 }}%</td>
+                                        <td>{{ rec.admission_probability|floatformat:0 }}%</td>
+                                        <td>{{ rec.created_at|date:"Y-m-d" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <i class="bi bi-stars text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 mb-4">暂无推荐记录</p>
+                        <a href="{% url 'recommend_schools' student.id %}" class="btn btn-success">
+                            <i class="bi bi-search"></i> 开始推荐学校
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- 快速操作 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">快速操作</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'recommend_schools' student.id %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-stars text-success me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">推荐院校</h6>
+                            <small class="text-muted">基于学生信息推荐最匹配的院校</small>
+                        </div>
+                    </a>
+                    <a href="{% url 'student_edit' student.id %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-pencil-square text-primary me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">编辑信息</h6>
+                            <small class="text-muted">修改学生基本信息和成绩</small>
+                        </div>
+                    </a>
+                    <a href="{% url 'student_delete' student.id %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-trash text-danger me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">删除学生</h6>
+                            <small class="text-muted">从系统中移除该学生所有信息</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

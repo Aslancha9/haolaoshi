@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ school.name }} - 学校详情{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'school_list' %}">院校库</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ school.name }}</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header {% if school.is_985 %}bg-danger{% elif school.is_211 %}bg-primary{% elif school.is_double_first_class %}bg-info{% else %}bg-success{% endif %} text-white">
+                <h4 class="mb-0">{{ school.name }}</h4>
+                <div>
+                    {% if school.is_985 %}<span class="badge bg-light text-dark me-1">985工程</span>{% endif %}
+                    {% if school.is_211 %}<span class="badge bg-light text-dark me-1">211工程</span>{% endif %}
+                    {% if school.is_double_first_class %}<span class="badge bg-light text-dark">双一流</span>{% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="ps-0" style="width: 120px;">学校代码:</th>
+                                    <td>{{ school.code|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">所在地区:</th>
+                                    <td>{{ school.province }} {{ school.city }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">学校类型:</th>
+                                    <td>{{ school.type|default:"综合类" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="ps-0">学校等级:</th>
+                                    <td>{{ school.level|default:"本科" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tbody>
+                                {% if school.website %}
+                                <tr>
+                                    <th scope="row" class="ps-0" style="width: 120px;">官方网站:</th>
+                                    <td><a href="{{ school.website }}" target="_blank" class="text-decoration-none">{{ school.website }}</a></td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <th scope="row" class="ps-0">学校特色:</th>
+                                    <td>
+                                        {% if school.is_985 %}985工程{% endif %}
+                                        {% if school.is_211 %}{% if school.is_985 %}、{% endif %}211工程{% endif %}
+                                        {% if school.is_double_first_class %}{% if school.is_985 or school.is_211 %}、{% endif %}双一流建设高校{% endif %}
+                                        {% if not school.is_985 and not school.is_211 and not school.is_double_first_class %}-{% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h5 class="border-bottom pb-2 mb-3">学校简介</h5>
+                    <p>{{ school.description|default:"暂无简介信息" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 历年录取分数线 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">历年录取分数线</h5>
+            </div>
+            <div class="card-body">
+                {% with score_lines=school.score_lines.all %}
+                {% if score_lines %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>年份</th>
+                                    <th>省份</th>
+                                    <th>批次</th>
+                                    <th>专业</th>
+                                    <th>录取分数</th>
+                                    <th>最低位次</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score_line in score_lines|dictsortreversed:"year"|slice:":10" %}
+                                    <tr>
+                                        <td>{{ score_line.year }}</td>
+                                        <td>{{ score_line.province }}</td>
+                                        <td>{{ score_line.batch|default:"-" }}</td>
+                                        <td>{{ score_line.major.name|default:"不限专业" }}</td>
+                                        <td class="fw-bold">{{ score_line.score }}</td>
+                                        <td>{{ score_line.min_rank|default:"-" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <i class="bi bi-clipboard-data text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3">暂无分数线数据</p>
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- 快速申请 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">对这所学校感兴趣？</h5>
+            </div>
+            <div class="card-body text-center">
+                <p>使用AI大数据择校功能，分析您与该校的匹配度</p>
+                <a href="{% url 'ai_recommendation_form' %}" class="btn btn-primary">
+                    <i class="bi bi-magic"></i> AI大数据择校
+                </a>
+            </div>
+        </div>
+        
+        <!-- 学校标签 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">学校标签</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-primary">{{ school.province }}</span>
+                    <span class="badge bg-secondary">{{ school.type|default:"综合类" }}</span>
+                    {% if school.is_985 %}<span class="badge bg-danger">985工程</span>{% endif %}
+                    {% if school.is_211 %}<span class="badge bg-info text-dark">211工程</span>{% endif %}
+                    {% if school.is_double_first_class %}<span class="badge bg-success">双一流</span>{% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- 考研指南 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">考研指南</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-calendar-check text-success me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">考研报名时间</h6>
+                            <small class="text-muted">一般在每年10月中旬</small>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-journal-text text-primary me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">初试科目</h6>
+                            <small class="text-muted">政治、英语、专业课一、专业课二</small>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-people text-warning me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">复试内容</h6>
+                            <small class="text-muted">专业面试、英语口语、综合能力</small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
