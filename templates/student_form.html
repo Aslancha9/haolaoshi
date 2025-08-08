@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息填写 - 智能升学择校辅助系统</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="/static/css/main.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-primary text-white">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>智能升学择校辅助系统</h1>
+                </div>
+                <div class="col-md-6 d-flex align-items-center justify-content-end">
+                    <a href="/" class="text-white me-3">首页</a>
+                    <a href="/about" class="text-white me-3">关于我们</a>
+                    <a href="/contact" class="text-white">联系我们</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0">学生信息填写</h3>
+                        <p class="text-muted mb-0">请填写您的基本信息，帮助我们为您提供更精准的升学建议</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="studentForm" class="needs-validation" novalidate>
+                            <!-- 基本信息 -->
+                            <h5 class="mb-3">基本信息</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">姓名</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <div class="invalid-feedback">请输入姓名</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="gender" class="form-label">性别</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="">请选择</option>
+                                        <option value="男">男</option>
+                                        <option value="女">女</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="age" class="form-label">年龄</label>
+                                    <input type="number" class="form-control" id="age" name="age" min="10" max="99">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="province" class="form-label">所在省份</label>
+                                    <select class="form-select" id="province" name="province">
+                                        <option value="">请选择</option>
+                                        <option value="北京">北京</option>
+                                        <option value="上海">上海</option>
+                                        <option value="重庆">重庆</option>
+                                        <option value="四川">四川</option>
+                                        <option value="浙江">浙江</option>
+                                        <option value="江苏">江苏</option>
+                                        <!-- 其他省份 -->
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="current_school" class="form-label">当前就读学校</label>
+                                    <input type="text" class="form-control" id="current_school" name="current_school">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">联系电话</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">电子邮箱</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="education_path" class="form-label">升学路径</label>
+                                    <select class="form-select" id="education_path" name="education_path_id" required>
+                                        <option value="">请选择</option>
+                                        <option value="1">高考</option>
+                                        <option value="2">专升本</option>
+                                        <option value="3">考研</option>
+                                        <option value="4">艺考</option>
+                                        <option value="5">出国留学</option>
+                                    </select>
+                                    <div class="invalid-feedback">请选择升学路径</div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- 学习成绩 -->
+                            <h5 class="mb-3">学习成绩</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="total_score" class="form-label">总分</label>
+                                    <input type="number" class="form-control" id="total_score" name="total_score">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="chinese_score" class="form-label">语文</label>
+                                    <input type="number" class="form-control" id="chinese_score" name="chinese_score">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="math_score" class="form-label">数学</label>
+                                    <input type="number" class="form-control" id="math_score" name="math_score">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="english_score" class="form-label">英语</label>
+                                    <input type="number" class="form-control" id="english_score" name="english_score">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="physics_score" class="form-label">物理</label>
+                                    <input type="number" class="form-control" id="physics_score" name="physics_score">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="chemistry_score" class="form-label">化学</label>
+                                    <input type="number" class="form-control" id="chemistry_score" name="chemistry_score">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="biology_score" class="form-label">生物</label>
+                                    <input type="number" class="form-control" id="biology_score" name="biology_score">
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- 个人特质 -->
+                            <h5 class="mb-3">个人特质</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">学科优势（最多选3项）</label>
+                                    <div class="row ms-1">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="语文" name="strengths">
+                                                <label class="form-check-label">语文</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="数学" name="strengths">
+                                                <label class="form-check-label">数学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="英语" name="strengths">
+                                                <label class="form-check-label">英语</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="物理" name="strengths">
+                                                <label class="form-check-label">物理</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="化学" name="strengths">
+                                                <label class="form-check-label">化学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input strength-check" type="checkbox" value="生物" name="strengths">
+                                                <label class="form-check-label">生物</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">学科弱项（最多选3项）</label>
+                                    <div class="row ms-1">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="语文" name="weaknesses">
+                                                <label class="form-check-label">语文</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="数学" name="weaknesses">
+                                                <label class="form-check-label">数学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="英语" name="weaknesses">
+                                                <label class="form-check-label">英语</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="物理" name="weaknesses">
+                                                <label class="form-check-label">物理</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="化学" name="weaknesses">
+                                                <label class="form-check-label">化学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input weakness-check" type="checkbox" value="生物" name="weaknesses">
+                                                <label class="form-check-label">生物</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">兴趣爱好（最多选5项）</label>
+                                    <div class="row ms-1">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="计算机" name="interests">
+                                                <label class="form-check-label">计算机</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="文学" name="interests">
+                                                <label class="form-check-label">文学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="艺术" name="interests">
+                                                <label class="form-check-label">艺术</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="体育" name="interests">
+                                                <label class="form-check-label">体育</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="科学" name="interests">
+                                                <label class="form-check-label">科学</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="医学" name="interests">
+                                                <label class="form-check-label">医学</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="经济" name="interests">
+                                                <label class="form-check-label">经济</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="法律" name="interests">
+                                                <label class="form-check-label">法律</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="教育" name="interests">
+                                                <label class="form-check-label">教育</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input interest-check" type="checkbox" value="外语" name="interests">
+                                                <label class="form-check-label">外语</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="career_goals" class="form-label">职业目标</label>
+                                    <select class="form-select" id="career_goals" name="career_goals">
+                                        <option value="">请选择</option>
+                                        <option value="IT行业">IT行业</option>
+                                        <option value="医疗卫生">医疗卫生</option>
+                                        <option value="金融行业">金融行业</option>
+                                        <option value="教育工作">教育工作</option>
+                                        <option value="公务员">公务员</option>
+                                        <option value="法律行业">法律行业</option>
+                                        <option value="艺术设计">艺术设计</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- 目标规划 -->
+                            <h5 class="mb-3">目标规划</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="target_score" class="form-label">目标分数</label>
+                                    <input type="number" class="form-control" id="target_score" name="target_score">
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary px-5">提交信息</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>智能升学择校辅助系统</h5>
+                    <p>利用人工智能技术，提供个性化升学指导服务</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">关于我们</a></li>
+                        <li><a href="#" class="text-white">服务条款</a></li>
+                        <li><a href="#" class="text-white">隐私政策</a></li>
+                        <li><a href="#" class="text-white">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>联系方式</h5>
+                    <ul class="list-unstyled">
+                        <li>邮箱: contact@haolaoshi.com</li>
+                        <li>电话: 123-456-7890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>© 2023 智能升学择校辅助系统. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 引入Bootstrap JS和依赖项 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    
+    <!-- 自定义JS -->
+    <script>
+        // 表单验证
+        document.addEventListener('DOMContentLoaded', function() {
+            // 限制选择最多3个优势学科
+            const strengthChecks = document.querySelectorAll('.strength-check');
+            strengthChecks.forEach(check => {
+                check.addEventListener('change', function() {
+                    if (document.querySelectorAll('.strength-check:checked').length > 3) {
+                        this.checked = false;
+                        alert('最多只能选择3个优势学科');
+                    }
+                });
+            });
+
+            // 限制选择最多3个弱势学科
+            const weaknessChecks = document.querySelectorAll('.weakness-check');
+            weaknessChecks.forEach(check => {
+                check.addEventListener('change', function() {
+                    if (document.querySelectorAll('.weakness-check:checked').length > 3) {
+                        this.checked = false;
+                        alert('最多只能选择3个弱势学科');
+                    }
+                });
+            });
+
+            // 限制选择最多5个兴趣爱好
+            const interestChecks = document.querySelectorAll('.interest-check');
+            interestChecks.forEach(check => {
+                check.addEventListener('change', function() {
+                    if (document.querySelectorAll('.interest-check:checked').length > 5) {
+                        this.checked = false;
+                        alert('最多只能选择5个兴趣爱好');
+                    }
+                });
+            });
+
+            // 表单提交
+            const form = document.getElementById('studentForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                // 收集表单数据
+                const formData = new FormData(form);
+                const studentData = {
+                    name: formData.get('name'),
+                    gender: formData.get('gender'),
+                    age: formData.get('age') ? parseInt(formData.get('age')) : null,
+                    current_school: formData.get('current_school'),
+                    province: formData.get('province'),
+                    phone: formData.get('phone'),
+                    email: formData.get('email'),
+                    education_path_id: parseInt(formData.get('education_path_id')),
+                    
+                    total_score: formData.get('total_score') ? parseFloat(formData.get('total_score')) : null,
+                    chinese_score: formData.get('chinese_score') ? parseFloat(formData.get('chinese_score')) : null,
+                    math_score: formData.get('math_score') ? parseFloat(formData.get('math_score')) : null,
+                    english_score: formData.get('english_score') ? parseFloat(formData.get('english_score')) : null,
+                    physics_score: formData.get('physics_score') ? parseFloat(formData.get('physics_score')) : null,
+                    chemistry_score: formData.get('chemistry_score') ? parseFloat(formData.get('chemistry_score')) : null,
+                    biology_score: formData.get('biology_score') ? parseFloat(formData.get('biology_score')) : null,
+                    
+                    strengths: Array.from(document.querySelectorAll('.strength-check:checked')).map(el => el.value),
+                    weaknesses: Array.from(document.querySelectorAll('.weakness-check:checked')).map(el => el.value),
+                    interests: Array.from(document.querySelectorAll('.interest-check:checked')).map(el => el.value),
+                    career_goals: formData.get('career_goals'),
+                    
+                    target_score: formData.get('target_score') ? parseFloat(formData.get('target_score')) : null
+                };
+
+                // 发送到服务器
+                fetch('/api/students', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(studentData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应错误');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('信息提交成功！');
+                    // 重定向到推荐页面
+                    window.location.href = `/student/${data.id}/recommendation`;
+                })
+                .catch(error => {
+                    console.error('提交出错:', error);
+                    alert('提交失败，请稍后重试');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

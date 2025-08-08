@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        编辑学生信息 - {{ form.instance.name }}
+    {% else %}
+        添加新学生
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}
+                        编辑学生信息
+                    {% else %}
+                        添加新学生
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">{{ form.gender.label }}</label>
+                            {{ form.gender }}
+                            {% if form.gender.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.gender.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.province.id_for_label }}" class="form-label fw-bold">{{ form.province.label }}</label>
+                            {{ form.province }}
+                            {% if form.province.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.province.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.education_path.id_for_label }}" class="form-label fw-bold">{{ form.education_path.label }}</label>
+                            {{ form.education_path }}
+                            {% if form.education_path.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.education_path.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.rank.id_for_label }}" class="form-label fw-bold">{{ form.rank.label }}</label>
+                            {{ form.rank }}
+                            {% if form.rank.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.rank.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">成绩信息</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="{{ form.total_score.id_for_label }}" class="form-label fw-bold">{{ form.total_score.label }}</label>
+                                    {{ form.total_score }}
+                                    {% if form.total_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.total_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.chinese_score.id_for_label }}" class="form-label fw-bold">{{ form.chinese_score.label }}</label>
+                                    {{ form.chinese_score }}
+                                    {% if form.chinese_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.chinese_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.math_score.id_for_label }}" class="form-label fw-bold">{{ form.math_score.label }}</label>
+                                    {{ form.math_score }}
+                                    {% if form.math_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.math_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="{{ form.english_score.id_for_label }}" class="form-label fw-bold">{{ form.english_score.label }}</label>
+                                    {{ form.english_score }}
+                                    {% if form.english_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.english_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.comprehensive_score.id_for_label }}" class="form-label fw-bold">{{ form.comprehensive_score.label }}</label>
+                                    {{ form.comprehensive_score }}
+                                    {% if form.comprehensive_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.comprehensive_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">个人情况</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="{{ form.interests.id_for_label }}" class="form-label fw-bold">{{ form.interests.label }}</label>
+                                {{ form.interests }}
+                                <div class="form-text">请填写您感兴趣的学科、专业或领域，如：计算机、文学、经济等</div>
+                                {% if form.interests.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.interests.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.career_goals.id_for_label }}" class="form-label fw-bold">{{ form.career_goals.label }}</label>
+                                {{ form.career_goals }}
+                                <div class="form-text">请描述您未来的职业规划或目标</div>
+                                {% if form.career_goals.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.career_goals.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'student_list' %}" class="btn btn-secondary">取消</a>
+                        <button type="submit" class="btn btn-primary">
+                            {% if form.instance.pk %}
+                                保存修改
+                            {% else %}
+                                添加学生
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 表单验证
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const totalScoreInput = document.getElementById('{{ form.total_score.id_for_label }}');
+        
+        form.addEventListener('submit', function(event) {
+            if (totalScoreInput && totalScoreInput.value && parseInt(totalScoreInput.value) <= 0) {
+                event.preventDefault();
+                alert('总分必须大于0');
+            }
+        });
+    });
+</script>
+{% endblock %}

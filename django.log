@@ -1,0 +1,3 @@
+Watching for file changes with StatReloader
+[07/Aug/2025 16:25:30] "GET / HTTP/1.1" 200 28199
+[07/Aug/2025 16:25:40] "HEAD /static/images/schools/cqtbi/banner.jpg HTTP/1.1" 200 0

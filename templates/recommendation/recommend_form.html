@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}院校推荐 - {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'student_list' %}">学生管理</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'student_detail' student.id %}">{{ student.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">院校推荐</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">院校推荐设置</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- 学生信息摘要 -->
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>姓名:</strong> {{ student.name }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>省份:</strong> {{ student.province }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>教育路径:</strong> {{ student.education_path }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>总分:</strong> {{ student.total_score|default:"未填写" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>位次:</strong> {{ student.rank|default:"未填写" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>兴趣:</strong> {{ student.interests|default:"未填写"|truncatechars:20 }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 推荐设置表单 -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.strategy.id_for_label }}" class="form-label fw-bold">{{ form.strategy.label }}</label>
+                        {{ form.strategy }}
+                        <div class="form-text">
+                            <ul class="mb-0 ps-3">
+                                <li>平衡策略: 均衡推荐冲刺、匹配和保底院校</li>
+                                <li>激进策略: 推荐更多冲刺院校</li>
+                                <li>保守策略: 推荐更多保底院校</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.num_recommendations.id_for_label }}" class="form-label fw-bold">{{ form.num_recommendations.label }}</label>
+                        {{ form.num_recommendations }}
+                        <div class="form-text">选择要推荐的院校总数量，通常推荐9-15所院校</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'student_detail' student.id %}" class="btn btn-secondary">返回</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> 开始推荐
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

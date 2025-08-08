@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习计划 - 智能升学择校辅助系统</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="/static/css/main.css" rel="stylesheet">
+    <style>
+        .plan-section {
+            border-left: 3px solid #0d6efd;
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+        .milestone {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .milestone::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+        }
+        .timetable th, .timetable td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .weekly-schedule {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .resource-item {
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f0f7ff;
+            margin-bottom: 10px;
+        }
+        .resource-item .priority-high {
+            color: #dc3545;
+        }
+        .resource-item .priority-medium {
+            color: #fd7e14;
+        }
+        .resource-item .priority-low {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>智能升学择校辅助系统</h1>
+                </div>
+                <div class="col-md-6 d-flex align-items-center justify-content-end">
+                    <a href="/" class="text-white me-3">首页</a>
+                    <a href="/about" class="text-white me-3">关于我们</a>
+                    <a href="/contact" class="text-white">联系我们</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="mb-5">
+            <h2 class="mb-4">个性化学习计划</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="lead">
+                        基于您的学习情况和目标，我们为您生成了以下个性化学习计划。计划包含学习目标、时间安排、学习资源和进度监控，帮助您高效备考。
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">学生信息</h5>
+                            <p class="card-text mb-1"><strong>姓名：</strong><span id="student-name">加载中...</span></p>
+                            <p class="card-text mb-1"><strong>当前分数：</strong><span id="student-score">加载中...</span></p>
+                            <p class="card-text"><strong>目标分数：</strong><span id="target-score">加载中...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 计划选项 -->
+        <div class="mb-5">
+            <div class="card border-light">
+                <div class="card-body">
+                    <h5 class="card-title">生成学习计划</h5>
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="plan-type" class="form-label">计划类型</label>
+                            <select class="form-select" id="plan-type">
+                                <option value="overall">总体计划</option>
+                                <option value="weekly">每周计划</option>
+                                <option value="subject">学科计划</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="plan-duration" class="form-label">计划时长</label>
+                            <select class="form-select" id="plan-duration">
+                                <option value="1周">1周</option>
+                                <option value="2周">2周</option>
+                                <option value="1个月" selected>1个月</option>
+                                <option value="3个月">3个月</option>
+                                <option value="6个月">6个月</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="subject-container" style="display: none;">
+                            <label for="focus-subject" class="form-label">重点学科</label>
+                            <select class="form-select" id="focus-subject">
+                                <option value="语文">语文</option>
+                                <option value="数学">数学</option>
+                                <option value="英语">英语</option>
+                                <option value="物理">物理</option>
+                                <option value="化学">化学</option>
+                                <option value="生物">生物</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button id="generate-plan" class="btn btn-primary w-100">生成计划</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="plan-container">
+            <!-- 计划将在这里动态加载 -->
+            <div class="text-center py-5">
+                <p class="text-muted">选择计划类型并点击"生成计划"按钮</p>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mt-5">
+            <a href="/recommendation" class="btn btn-outline-secondary">&laquo; 返回院校推荐</a>
+            <a href="#" id="download-plan" class="btn btn-primary">下载学习计划</a>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>智能升学择校辅助系统</h5>
+                    <p>利用人工智能技术，提供个性化升学指导服务</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">关于我们</a></li>
+                        <li><a href="#" class="text-white">服务条款</a></li>
+                        <li><a href="#" class="text-white">隐私政策</a></li>
+                        <li><a href="#" class="text-white">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>联系方式</h5>
+                    <ul class="list-unstyled">
+                        <li>邮箱: contact@haolaoshi.com</li>
+                        <li>电话: 123-456-7890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>© 2023 智能升学择校辅助系统. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 引入Bootstrap JS和依赖项 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- 自定义JS -->
+    <script>
+        // 获取URL参数
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 获取学生ID
+        const studentId = getUrlParam('student_id') || 1; // 默认值1用于测试
+        
+        // 当前计划ID
+        let currentPlanId = null;
+
+        // 获取学生信息
+        async function loadStudentInfo() {
+            try {
+                const response = await fetch(`/api/students/${studentId}`);
+                if (!response.ok) {
+                    throw new Error('获取学生信息失败');
+                }
+                const student = await response.json();
+                
+                // 更新页面上的学生信息
+                document.getElementById('student-name').textContent = student.name;
+                document.getElementById('student-score').textContent = student.total_score || '暂无';
+                document.getElementById('target-score').textContent = student.target_score || 
+                    (student.total_score ? (parseInt(student.total_score) + 30) : '暂无');
+                
+                return student;
+            } catch (error) {
+                console.error('加载学生信息出错:', error);
+                alert('加载学生信息失败');
+            }
+        }
+
+        // 生成学习计划
+        async function generateStudyPlan() {
+            const planType = document.getElementById('plan-type').value;
+            const duration = document.getElementById('plan-duration').value;
+            let focusSubjects = null;
+            
+            if (planType === 'subject') {
+                focusSubjects = [document.getElementById('focus-subject').value];
+            }
+            
+            try {
+                // 显示加载状态
+                document.getElementById('plan-container').innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">正在生成学习计划，请稍候...</p>
+                    </div>
+                `;
+                
+                // 构建请求体
+                const requestBody = {
+                    plan_type: planType,
+                    duration: duration,
+                };
+                
+                if (focusSubjects) {
+                    requestBody.focus_subjects = focusSubjects;
+                }
+
+                const response = await fetch(`/api/study_plans/generate?student_id=${studentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error('生成学习计划失败');
+                }
+                
+                const data = await response.json();
+                currentPlanId = data.plan_id;
+                
+                // 渲染学习计划
+                renderStudyPlan(data);
+                
+            } catch (error) {
+                console.error('生成学习计划出错:', error);
+                document.getElementById('plan-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        生成学习计划失败，请稍后重试
+                    </div>
+                `;
+            }
+        }
+
+        // 渲染学习计划
+        function renderStudyPlan(plan) {
+            const planContainer = document.getElementById('plan-container');
+            const planType = plan.plan_type;
+            
+            let html = '';
+            
+            // 标题和类型
+            html += `
+                <div class="mb-4">
+                    <h3>${plan.title || '个性化学习计划'}</h3>
+                    <p class="text-muted">计划类型：${getPlanTypeName(planType)} | 计划周期：${plan.duration || '未指定'}</p>
+                </div>
+            `;
+            
+            if (planType === 'overall') {
+                // 总体学习计划
+                html += renderOverallPlan(plan);
+            } else if (planType === 'weekly') {
+                // 每周学习计划
+                html += renderWeeklyPlan(plan);
+            } else if (planType === 'subject') {
+                // 学科学习计划
+                html += renderSubjectPlan(plan);
+            }
+            
+            // 学习资源
+            if (plan.learning_resources && plan.learning_resources.length > 0) {
+                html += `
+                    <div class="mt-5 plan-section">
+                        <h4>推荐学习资源</h4>
+                        <div class="row mt-3">
+                `;
+                
+                plan.learning_resources.forEach(resource => {
+                    let priorityClass = '';
+                    let priorityIcon = '';
+                    
+                    if (resource.priority === '高') {
+                        priorityClass = 'priority-high';
+                        priorityIcon = 'exclamation-circle';
+                    } else if (resource.priority === '中') {
+                        priorityClass = 'priority-medium';
+                        priorityIcon = 'info-circle';
+                    } else {
+                        priorityClass = 'priority-low';
+                        priorityIcon = 'check-circle';
+                    }
+                    
+                    html += `
+                        <div class="col-md-6 mb-3">
+                            <div class="resource-item">
+                                <h6>${resource.name}</h6>
+                                <p class="mb-1 small">类型：${resource.type || '未指定'}</p>
+                                <p class="mb-0 small ${priorityClass}">
+                                    <i class="fas fa-${priorityIcon}"></i> 优先级：${resource.priority || '一般'}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            planContainer.innerHTML = html;
+        }
+
+        // 渲染总体学习计划
+        function renderOverallPlan(plan) {
+            let html = '';
+            
+            // 总体概述
+            if (plan.overview) {
+                html += `
+                    <div class="plan-section">
+                        <h4>计划概述</h4>
+                        <p>${plan.overview}</p>
+                    </div>
+                `;
+            }
+            
+            // 学习目标
+            if (plan.goals && plan.goals.length > 0) {
+                html += `
+                    <div class="plan-section">
+                        <h4>学习目标</h4>
+                        <ul class="mt-3">
+                `;
+                
+                plan.goals.forEach(goal => {
+                    html += `<li>${goal}</li>`;
+                });
+                
+                html += `
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // 进度里程碑
+            if (plan.milestones && plan.milestones.length > 0) {
+                html += `
+                    <div class="plan-section">
+                        <h4>进度里程碑</h4>
+                        <div class="mt-3">
+                `;
+                
+                plan.milestones.forEach(milestone => {
+                    html += `
+                        <div class="milestone">
+                            <h6>第${milestone.week}周</h6>
+                            <p>${milestone.target}</p>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 周计划概述
+            if (plan.weekly_schedule) {
+                html += `
+                    <div class="plan-section">
+                        <h4>周计划概述</h4>
+                        <div class="weekly-schedule mt-3">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>时间段</th>
+                                        <th>学习内容</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                for (const [week, content] of Object.entries(plan.weekly_schedule)) {
+                    html += `
+                        <tr>
+                            <td>${week}</td>
+                            <td>${content}</td>
+                        </tr>
+                    `;
+                }
+                
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        // 渲染每周学习计划
+        function renderWeeklyPlan(plan) {
+            let html = '';
+            
+            // 每周安排
+            if (plan.weekly_schedule) {
+                html += `
+                    <div class="plan-section">
+                        <h4>每周学习安排</h4>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered timetable">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>上午</th>
+                                        <th>下午</th>
+                                        <th>晚上</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                days.forEach(day => {
+                    const dayData = plan.weekly_schedule[day] || {};
+                    
+                    html += `
+                        <tr>
+                            <th>${day}</th>
+                            <td>${dayData.morning || '自主学习'}</td>
+                            <td>${dayData.afternoon || '自主学习'}</td>
+                            <td>${dayData.evening || '自主学习'}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 每日任务
+            if (plan.daily_tasks) {
+                html += `
+                    <div class="plan-section mt-4">
+                        <h4>日常任务提示</h4>
+                        <div class="card mt-3">
+                            <div class="card-body">
+                `;
+                
+                for (const [task, description] of Object.entries(plan.daily_tasks)) {
+                    html += `
+                        <p><strong>${task.replace(/_/g, ' ')}:</strong> ${description}</p>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        // 渲染学科学习计划
+        function renderSubjectPlan(plan) {
+            let html = '';
+            
+            // 学科计划概述
+            if (plan.overview) {
+                html += `
+                    <div class="plan-section">
+                        <h4>学科学习概述</h4>
+                        <p>${plan.overview}</p>
+                    </div>
+                `;
+            }
+            
+            // 学习目标
+            if (plan.goals && plan.goals.length > 0) {
+                html += `
+                    <div class="plan-section">
+                        <h4>学习目标</h4>
+                        <ul class="mt-3">
+                `;
+                
+                plan.goals.forEach(goal => {
+                    html += `<li>${goal}</li>`;
+                });
+                
+                html += `
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // 推荐材料
+            if (plan.recommended_materials && plan.recommended_materials.length > 0) {
+                html += `
+                    <div class="plan-section">
+                        <h4>推荐学习材料</h4>
+                        <div class="mt-3">
+                `;
+                
+                plan.recommended_materials.forEach(material => {
+                    if (typeof material === 'object' && material.subject) {
+                        html += `
+                            <h6>${material.subject}</h6>
+                            <ul>
+                        `;
+                        
+                        if (Array.isArray(material.materials)) {
+                            material.materials.forEach(item => {
+                                html += `<li>${item}</li>`;
+                            });
+                        }
+                        
+                        html += `</ul>`;
+                    } else {
+                        html += `<p>${material}</p>`;
+                    }
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 进度里程碑
+            if (plan.milestones && plan.milestones.length > 0) {
+                html += `
+                    <div class="plan-section">
+                        <h4>学习进度安排</h4>
+                        <div class="mt-3">
+                `;
+                
+                plan.milestones.forEach(milestone => {
+                    html += `
+                        <div class="milestone">
+                            <h6>${milestone.week ? `第${milestone.week}周` : '阶段目标'}</h6>
+                            <p>${milestone.target}</p>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        // 获取计划类型名称
+        function getPlanTypeName(type) {
+            switch (type) {
+                case 'overall':
+                    return '总体学习计划';
+                case 'weekly':
+                    return '每周学习计划';
+                case 'subject':
+                    return '学科学习计划';
+                default:
+                    return '学习计划';
+            }
+        }
+
+        // 显示/隐藏学科选择
+        document.getElementById('plan-type').addEventListener('change', function() {
+            const subjectContainer = document.getElementById('subject-container');
+            if (this.value === 'subject') {
+                subjectContainer.style.display = 'block';
+            } else {
+                subjectContainer.style.display = 'none';
+            }
+        });
+
+        // 生成计划按钮点击事件
+        document.getElementById('generate-plan').addEventListener('click', generateStudyPlan);
+
+        // 下载计划按钮点击事件
+        document.getElementById('download-plan').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (!currentPlanId) {
+                alert('请先生成学习计划');
+                return;
+            }
+            
+            const planContainer = document.getElementById('plan-container');
+            
+            // 使用html2canvas和jsPDF
+            html2canvas(planContainer).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF();
+                const imgProps= pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('学习计划.pdf');
+            });
+        });
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 加载学生信息
+            await loadStudentInfo();
+        });
+    </script>
+</body>
+</html>

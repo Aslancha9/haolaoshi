@@ -1,0 +1,33 @@
+2025-08-07T08:31:28Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2025-08-07T08:31:28Z INF Requesting new quick Tunnel on trycloudflare.com...
+2025-08-07T08:31:33Z INF +--------------------------------------------------------------------------------------------+
+2025-08-07T08:31:33Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+2025-08-07T08:31:33Z INF |  https://concepts-shirts-ashley-avi.trycloudflare.com                                      |
+2025-08-07T08:31:33Z INF +--------------------------------------------------------------------------------------------+
+2025-08-07T08:31:33Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
+2025-08-07T08:31:33Z INF Version 2025.7.0 (Checksum 51e3909335fd7ba2ed5c696b0a6fb7d4a74f6a15bf36615cea0fccba620cfb3f)
+2025-08-07T08:31:33Z INF GOOS: linux, GOVersion: go1.24.4, GoArch: amd64
+2025-08-07T08:31:33Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:8080]
+2025-08-07T08:31:33Z INF cloudflared will not automatically update if installed by a package manager.
+2025-08-07T08:31:33Z INF Generated Connector ID: 1a4a3ea7-41ef-4828-b63c-60987d8e5fc4
+2025-08-07T08:31:33Z INF Initial protocol quic
+2025-08-07T08:31:33Z INF ICMP proxy will use 172.17.0.13 as source for IPv4
+2025-08-07T08:31:33Z INF ICMP proxy will use :: as source for IPv6
+2025-08-07T08:31:33Z INF ICMP proxy will use 172.17.0.13 as source for IPv4
+2025-08-07T08:31:33Z INF ICMP proxy will use :: as source for IPv6
+2025-08-07T08:31:33Z INF Starting metrics server on 127.0.0.1:20241/metrics
+2025-08-07T08:31:33Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.200.33
+2025/08/07 16:31:33 failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 7168 kiB, got: 416 kiB). See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes for details.
+2025-08-07T08:31:33Z INF Registered tunnel connection connIndex=0 connection=38193bac-2932-4783-9570-84e9c786d111 event=0 ip=198.41.200.33 location=lax06 protocol=quic
+2025-08-07T08:41:06Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T08:41:06Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/schools/?page=2 event=0 ip=198.41.200.33 type=http
+2025-08-07T09:58:27Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T09:58:27Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/ event=0 ip=198.41.200.33 type=http
+2025-08-07T10:12:00Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T10:12:00Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/ event=0 ip=198.41.200.33 type=http
+2025-08-07T10:13:21Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T10:13:21Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/ event=0 ip=198.41.200.33 type=http
+2025-08-07T10:13:36Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T10:13:36Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/ event=0 ip=198.41.200.33 type=http
+2025-08-07T10:13:48Z ERR  error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 event=1 ingressRule=0 originService=http://localhost:8080
+2025-08-07T10:13:48Z ERR Request failed error="Unable to reach the origin service. The service may be down or it may not be responding to traffic from cloudflared: dial tcp 127.0.0.1:8080: connect: connection refused" connIndex=0 dest=https://concepts-shirts-ashley-avi.trycloudflare.com/ event=0 ip=198.41.200.33 type=http

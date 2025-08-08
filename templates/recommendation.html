@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>院校推荐结果 - 智能升学择校辅助系统</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="/static/css/main.css" rel="stylesheet">
+    <style>
+        .school-card {
+            transition: transform 0.3s;
+        }
+        .school-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .category-title {
+            position: relative;
+        }
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #4e7abc;
+        }
+        .major-tag {
+            font-size: 12px;
+            padding: 3px 8px;
+        }
+        .school-feature {
+            font-size: 13px;
+            color: #666;
+        }
+        .match-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(13, 110, 253, 0.9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>智能升学择校辅助系统</h1>
+                </div>
+                <div class="col-md-6 d-flex align-items-center justify-content-end">
+                    <a href="/" class="text-white me-3">首页</a>
+                    <a href="/about" class="text-white me-3">关于我们</a>
+                    <a href="/contact" class="text-white">联系我们</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="mb-5">
+            <h2 class="mb-4">院校推荐结果</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="lead">
+                        根据您提供的信息，我们为您生成了以下院校推荐。推荐分为三类：冲刺院校（需要努力追赶的目标）、匹配院校（与您的水平较为匹配）和保底院校（把握较大的选择）。
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">学生信息</h5>
+                            <p class="card-text mb-1"><strong>姓名：</strong><span id="student-name">加载中...</span></p>
+                            <p class="card-text mb-1"><strong>总分：</strong><span id="student-score">加载中...</span></p>
+                            <p class="card-text"><strong>优势学科：</strong><span id="student-strengths">加载中...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐策略选择 -->
+        <div class="mb-5">
+            <div class="card border-light">
+                <div class="card-body">
+                    <h5 class="card-title">调整推荐策略</h5>
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="recommendStrategy" id="strategyBalanced" value="balanced" checked>
+                                <label class="form-check-label" for="strategyBalanced">平衡（均衡分配）</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="recommendStrategy" id="strategyAggressive" value="aggressive">
+                                <label class="form-check-label" for="strategyAggressive">激进（更多冲刺院校）</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="recommendStrategy" id="strategyConservative" value="conservative">
+                                <label class="form-check-label" for="strategyConservative">保守（更多保底院校）</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="preferProvince">
+                                <option value="">不限制省份</option>
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="重庆">重庆</option>
+                                <option value="四川">四川</option>
+                                <option value="浙江">浙江</option>
+                                <option value="江苏">江苏</option>
+                                <!-- 其他省份 -->
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="refreshRecommendation" class="btn btn-primary w-100">重新推荐</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 冲刺院校 -->
+        <section class="mb-5">
+            <h3 class="category-title mb-4">冲刺院校</h3>
+            <p class="text-muted mb-3">这些学校录取分数略高于您的当前水平，需要努力追赶，录取可能性较低，但值得尝试。</p>
+            <div class="row g-4" id="challenge-schools">
+                <!-- 动态加载冲刺院校 -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 匹配院校 -->
+        <section class="mb-5">
+            <h3 class="category-title mb-4">匹配院校</h3>
+            <p class="text-muted mb-3">这些学校与您的当前水平较为匹配，录取可能性适中，是较为理想的选择。</p>
+            <div class="row g-4" id="match-schools">
+                <!-- 动态加载匹配院校 -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 保底院校 -->
+        <section class="mb-5">
+            <h3 class="category-title mb-4">保底院校</h3>
+            <p class="text-muted mb-3">这些学校录取分数低于您的当前水平，录取可能性较高，是相对保险的选择。</p>
+            <div class="row g-4" id="safety-schools">
+                <!-- 动态加载保底院校 -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="d-flex justify-content-between mt-5">
+            <a href="/student/new" class="btn btn-outline-secondary">重新填写信息</a>
+            <a href="/student/study-plan" class="btn btn-primary">生成学习计划 &raquo;</a>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>智能升学择校辅助系统</h5>
+                    <p>利用人工智能技术，提供个性化升学指导服务</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">关于我们</a></li>
+                        <li><a href="#" class="text-white">服务条款</a></li>
+                        <li><a href="#" class="text-white">隐私政策</a></li>
+                        <li><a href="#" class="text-white">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>联系方式</h5>
+                    <ul class="list-unstyled">
+                        <li>邮箱: contact@haolaoshi.com</li>
+                        <li>电话: 123-456-7890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>© 2023 智能升学择校辅助系统. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 引入Bootstrap JS和依赖项 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    
+    <!-- 自定义JS -->
+    <script>
+        // 获取URL参数
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 获取学生ID
+        const studentId = getUrlParam('student_id') || 1; // 默认值1用于测试
+
+        // 获取学生信息
+        async function loadStudentInfo() {
+            try {
+                const response = await fetch(`/api/students/${studentId}`);
+                if (!response.ok) {
+                    throw new Error('获取学生信息失败');
+                }
+                const student = await response.json();
+                
+                // 更新页面上的学生信息
+                document.getElementById('student-name').textContent = student.name;
+                document.getElementById('student-score').textContent = student.total_score || '暂无';
+                document.getElementById('student-strengths').textContent = 
+                    student.strengths && student.strengths.length > 0 
+                        ? student.strengths.join(', ') 
+                        : '暂无';
+                
+                return student;
+            } catch (error) {
+                console.error('加载学生信息出错:', error);
+                alert('加载学生信息失败');
+            }
+        }
+
+        // 加载推荐
+        async function loadRecommendations(strategy = 'balanced') {
+            try {
+                // 显示加载状态
+                document.getElementById('challenge-schools').innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                document.getElementById('match-schools').innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                document.getElementById('safety-schools').innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                
+                // 构建请求体
+                const requestBody = {
+                    strategy: strategy,
+                    num_recommendations: 9,
+                    include_majors: true
+                };
+                
+                // 添加省份偏好（如果有）
+                const preferProvince = document.getElementById('preferProvince').value;
+                if (preferProvince) {
+                    requestBody.prefer_provinces = [preferProvince];
+                }
+
+                const response = await fetch(`/api/students/${studentId}/recommend_schools`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error('获取推荐失败');
+                }
+                
+                const data = await response.json();
+                
+                // 更新页面上的推荐结果
+                renderSchools('challenge-schools', data.challenge_schools || []);
+                renderSchools('match-schools', data.match_schools || []);
+                renderSchools('safety-schools', data.safety_schools || []);
+                
+            } catch (error) {
+                console.error('加载推荐出错:', error);
+                alert('加载推荐失败');
+            }
+        }
+
+        // 渲染学校卡片
+        function renderSchools(containerId, schools) {
+            const container = document.getElementById(containerId);
+            
+            if (!schools || schools.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-info">暂无推荐</div></div>';
+                return;
+            }
+            
+            let html = '';
+            
+            schools.forEach(school => {
+                // 处理匹配度显示
+                const matchScore = Math.round((school.match || 0) * 100);
+                
+                // 处理推荐专业
+                let majorsHtml = '';
+                if (school.recommended_majors && school.recommended_majors.length > 0) {
+                    majorsHtml = school.recommended_majors.map(major => 
+                        `<span class="badge bg-light text-primary border border-primary major-tag me-1">${major.name}</span>`
+                    ).join('');
+                }
+                
+                // 生成学校特征
+                let featuresHtml = '';
+                if (school.is_985) featuresHtml += '<span class="badge bg-danger me-1">985</span>';
+                if (school.is_211) featuresHtml += '<span class="badge bg-success me-1">211</span>';
+                if (school.is_double_first_class) featuresHtml += '<span class="badge bg-warning me-1">双一流</span>';
+                
+                html += `
+                <div class="col-md-4">
+                    <div class="card h-100 school-card position-relative">
+                        <div class="match-score">${matchScore}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">${school.name}</h5>
+                            <p class="school-feature mb-2">
+                                ${featuresHtml}
+                                <span class="text-muted ms-2">${school.province || ''} | ${school.type || ''}</span>
+                            </p>
+                            <p class="card-text small">录取概率: ${school.admission_probability || '暂无数据'}</p>
+                            <hr>
+                            <div class="mb-2">
+                                <small class="text-muted">推荐专业:</small><br>
+                                ${majorsHtml || '<span class="text-muted small">暂无推荐专业</span>'}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="/schools/${school.school_id}" class="btn btn-sm btn-outline-primary">查看详情</a>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 加载学生信息
+            await loadStudentInfo();
+            
+            // 加载推荐
+            await loadRecommendations();
+            
+            // 刷新推荐按钮点击事件
+            document.getElementById('refreshRecommendation').addEventListener('click', function() {
+                const strategy = document.querySelector('input[name="recommendStrategy"]:checked').value;
+                loadRecommendations(strategy);
+            });
+        });
+    </script>
+</body>
+</html>
