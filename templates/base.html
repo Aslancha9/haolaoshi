@@ -10,124 +10,89 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- 自定义样式 -->
     <style>
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        .nav-link {
-            font-weight: 500;
-            padding: 0.8rem 1rem !important;
-            transition: all 0.3s;
-        }
-        .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 4px;
-        }
-        .navbar .dropdown-menu {
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: none;
-            padding: 0.5rem;
-        }
-        .navbar .dropdown-item {
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-        }
-        .bg-primary-light {
-            background-color: #e9f2ff;
-        }
-        .bg-success-light {
-            background-color: #e3fcef;
-        }
-        .bg-warning-light {
-            background-color: #fff8e1;
-        }
-        .recommendation-card {
-            transition: transform 0.2s;
-            margin-bottom: 1.5rem;
-        }
-        .recommendation-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .badge-safety {
-            background-color: #28a745;
-        }
-        .badge-match {
-            background-color: #007bff;
-        }
-        .badge-challenge {
-            background-color: #dc3545;
-        }
-        .card {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .card-header {
-            border-bottom: none;
-            padding: 1rem 1.5rem;
-        }
-        .card-body {
-            padding: 1.5rem;
-        }
-        .card-footer {
-            background-color: transparent;
-            border-top: 1px solid #eee;
-            padding: 1rem 1.5rem;
-        }
-        .footer {
-            background: #252b3b;
-            color: #8a94a7;
-            padding: 3rem 0;
-            margin-top: 3rem;
-        }
-        .footer h5 {
-            color: white;
-            font-weight: bold;
-            margin-bottom: 1.5rem;
-        }
-        .footer-link {
-            color: #8a94a7;
-            transition: all 0.2s;
-            display: block;
-            padding: 0.3rem 0;
-        }
-        .footer-link:hover {
-            color: white;
-            text-decoration: none;
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1000;
-        }
-        .back-to-top.visible {
-            opacity: 0.8;
-        }
-        .back-to-top:hover {
-            opacity: 1;
-        }
-    </style>
+    body {
+        background-color: #f5f7fa;
+        color: #2c3e50;
+        font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    /* 导航栏 */
+    .navbar {
+        background: linear-gradient(90deg, #4e73df, #1cc88a);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 0.8rem 0;
+    }
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 1.6rem;
+        letter-spacing: 0.5px;
+        color: #fff !important;
+    }
+    .nav-link {
+        font-weight: 500;
+        padding: 0.7rem 1rem !important;
+        color: #ecf0f1 !important;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    .nav-link.active,
+    .nav-link:hover {
+        background-color: rgba(255,255,255,0.15);
+        color: #fff !important;
+    }
+
+    /* 下拉菜单 */
+    .navbar .dropdown-menu {
+        border-radius: 12px;
+        border: none;
+        padding: 0.5rem;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        animation: dropdownFade 0.25s ease;
+    }
+    .navbar .dropdown-item {
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: background 0.2s;
+    }
+    .navbar .dropdown-item:hover {
+        background-color: #f0f3f7;
+    }
+
+    @keyframes dropdownFade {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 搜索框 */
+    .input-group input {
+        border-radius: 20px 0 0 20px;
+        border: none;
+        padding-left: 15px;
+        box-shadow: none !important;
+        font-size: 0.9rem;
+    }
+    .input-group button {
+        border: none;
+        border-radius: 0 20px 20px 0;
+        background-color: #fff;
+        transition: background 0.2s ease;
+    }
+    .input-group button:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* 登录按钮 */
+    .btn-outline-light {
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.6);
+        transition: all 0.3s ease;
+    }
+    .btn-outline-light:hover {
+        background-color: rgba(255,255,255,0.2);
+        border-color: #fff;
+    }
+</style>
+
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -170,109 +135,47 @@
                         </a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="btn btn-light btn-sm me-2">
-                        <i class="bi bi-search me-1"></i> 搜索
-                    </a>
-                    <a href="#" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-person-circle me-1"></i> 登录/注册
-                    </a>
-                </div>
+                <!-- 搜索框 + 语音输入 -->
+                <form class="d-flex align-items-center" onsubmit="return false;">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="搜索..." id="searchInput">
+                        <button class="btn btn-light" type="button" id="voiceBtn"><i class="bi bi-mic"></i></button>
+                        <button class="btn btn-light" type="button" id="searchBtn"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+                <a href="#" class="btn btn-outline-light btn-sm ms-2">
+                    <i class="bi bi-person-circle me-1"></i> 登录/注册
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- 消息提示 -->
-    <div class="container mt-3">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-
-    <!-- 主要内容 -->
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
-    </div>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                    <h5>智能择校系统</h5>
-                    <p class="mb-4">基于大数据和AI技术，为考研学子提供精准院校和专业推荐，助您圆梦理想学府。</p>
-                    <div class="social-links">
-                        <a href="#" class="text-white me-3"><i class="bi bi-wechat"></i></a>
-                        <a href="#" class="text-white me-3"><i class="bi bi-envelope"></i></a>
-                        <a href="#" class="text-white me-3"><i class="bi bi-telephone"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                    <h5>快速链接</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'index' %}" class="footer-link">首页</a></li>
-                        <li><a href="{% url 'ai_recommendation_form' %}" class="footer-link">AI择校系统</a></li>
-                        <li><a href="{% url 'school_list' %}" class="footer-link">院校库</a></li>
-                        <li><a href="{% url 'student_list' %}" class="footer-link">学生管理</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5>考研资源</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">考研大纲</a></li>
-                        <li><a href="#" class="footer-link">备考指南</a></li>
-                        <li><a href="#" class="footer-link">历年真题</a></li>
-                        <li><a href="#" class="footer-link">专业课资料</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>联系我们</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>重庆市南岸区XXX街XXX号</li>
-                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>400-XXX-XXXX</li>
-                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>info@example.com</li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="mt-4 mb-3" style="border-color: #3a3f51;">
-            <div class="text-center">
-                <p>智能升学择校辅助系统 &copy; {% now "Y" %}. 保留所有权利。</p>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- 回到顶部按钮 -->
-    <a href="#" class="back-to-top" id="backToTop">
-        <i class="bi bi-arrow-up"></i>
-    </a>
+    {% block content %}{% endblock %}
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
-    <!-- 自定义JS -->
+    <!-- 语音识别 JS -->
     <script>
-        // 回到顶部功能
-        document.addEventListener("DOMContentLoaded", function() {
-            const backToTopButton = document.getElementById('backToTop');
-            
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.classList.add('visible');
-                } else {
-                    backToTopButton.classList.remove('visible');
-                }
+        const voiceBtn = document.getElementById('voiceBtn');
+        const searchInput = document.getElementById('searchInput');
+
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            voiceBtn.addEventListener('click', () => {
+                recognition.start();
             });
-            
-            backToTopButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({top: 0, behavior: 'smooth'});
-            });
-        });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript;
+            };
+        } else {
+            voiceBtn.style.display = 'none'; // 如果浏览器不支持则隐藏
+        }
     </script>
-    {% block extra_js %}{% endblock %}
 </body>
 </html>
