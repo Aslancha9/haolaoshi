@@ -6,90 +6,282 @@
     <title>{% block title %}智能升学择校辅助系统{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Bootstrap Icons - 调整加载顺序，确保优先加载 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- 自定义样式 -->
     <style>
+    :root {
+        --primary-color: #3b71ca;
+        --secondary-color: #0ea5e9;
+        --accent-color: #38bdf8;
+        --text-light: #f8fafc;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     body {
-        background-color: #f5f7fa;
-        color: #2c3e50;
-        font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+        font-family: "Inter", "Segoe UI", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
     }
 
     /* 导航栏 */
     .navbar {
-        background: linear-gradient(90deg, #4e73df, #1cc88a);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        padding: 0.8rem 0;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        box-shadow: var(--shadow-md);
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1050;
+        transition: var(--transition);
     }
+
+    .navbar.scrolled {
+        padding: 0.5rem 0;
+        background: linear-gradient(135deg, #2563eb, #0284c7);
+        box-shadow: var(--shadow-sm);
+    }
+
     .navbar-brand {
-        font-weight: bold;
-        font-size: 1.6rem;
-        letter-spacing: 0.5px;
-        color: #fff !important;
+        font-weight: 700;
+        font-size: 1.5rem;
+        letter-spacing: 0.8px;
+        color: var(--text-light) !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
     }
+
+    .navbar-brand:hover {
+        transform: scale(1.02);
+    }
+
+    .navbar-brand i {
+        font-size: 1.8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
     .nav-link {
         font-weight: 500;
-        padding: 0.7rem 1rem !important;
-        color: #ecf0f1 !important;
-        border-radius: 6px;
-        transition: all 0.3s ease;
+        padding: 0.6rem 1.2rem !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 8px;
+        margin: 0 4px;
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
     }
+
+    .nav-link i {
+        margin-right: 8px;
+        width: 1.2em; /* 固定图标宽度，确保对齐 */
+        text-align: center;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: white;
+        transition: var(--transition);
+    }
+
     .nav-link.active,
     .nav-link:hover {
-        background-color: rgba(255,255,255,0.15);
-        color: #fff !important;
+        color: white !important;
+    }
+
+    .nav-link.active::after,
+    .nav-link:hover::after {
+        width: 100%;
     }
 
     /* 下拉菜单 */
     .navbar .dropdown-menu {
         border-radius: 12px;
         border: none;
-        padding: 0.5rem;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        animation: dropdownFade 0.25s ease;
-    }
-    .navbar .dropdown-item {
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        transition: background 0.2s;
-    }
-    .navbar .dropdown-item:hover {
-        background-color: #f0f3f7;
+        padding: 0.75rem;
+        box-shadow: var(--shadow-md);
+        margin-top: 8px;
+        background-color: white;
+        min-width: 200px;
+        animation: dropdownSlide 0.3s ease forwards;
+        opacity: 0;
+        transform-origin: top center;
+        transform: scale(0.95);
     }
 
-    @keyframes dropdownFade {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes dropdownSlide {
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .navbar .dropdown-item {
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        color: #334155;
+        margin-bottom: 4px;
+        transition: var(--transition);
+    }
+
+    .navbar .dropdown-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .navbar .dropdown-item:hover {
+        background-color: #f1f5f9;
+        color: var(--primary-color);
+        transform: translateX(4px);
+    }
+
+    .navbar .dropdown-divider {
+        margin: 0.5rem 0;
+        border-color: #e2e8f0;
     }
 
     /* 搜索框 */
-    .input-group input {
-        border-radius: 20px 0 0 20px;
-        border: none;
-        padding-left: 15px;
-        box-shadow: none !important;
-        font-size: 0.9rem;
+    .input-group {
+        max-width: 320px;
+        width: 100%;
     }
+
+    .input-group input {
+        border-radius: 24px 0 0 24px;
+        border: none;
+        padding: 0.5rem 1rem 0.5rem 1.25rem;
+        box-shadow: var(--shadow-sm) !important;
+        font-size: 0.9rem;
+        background-color: white;
+        transition: var(--transition);
+    }
+
+    .input-group input:focus {
+        background-color: #f8fafc;
+    }
+
     .input-group button {
         border: none;
-        border-radius: 0 20px 20px 0;
-        background-color: #fff;
-        transition: background 0.2s ease;
+        border-radius: 0 24px 24px 0;
+        background-color: white;
+        box-shadow: var(--shadow-sm) !important;
+        color: #64748b;
+        transition: var(--transition);
+        padding: 0 1rem;
     }
+
     .input-group button:hover {
-        background-color: #f0f0f0;
+        background-color: #f1f5f9;
+        color: var(--primary-color);
+    }
+
+    .input-group button:not(:last-child) {
+        border-radius: 0;
+        border-right: 1px solid #e2e8f0;
     }
 
     /* 登录按钮 */
     .btn-outline-light {
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.6);
-        transition: all 0.3s ease;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        padding: 0.4rem 1.25rem;
+        font-weight: 500;
+        transition: var(--transition);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
+
     .btn-outline-light:hover {
-        background-color: rgba(255,255,255,0.2);
-        border-color: #fff;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-light i {
+        margin-right: 6px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 992px) {
+        .navbar-collapse {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link {
+            color: #334155 !important;
+            padding: 0.6rem !important;
+            margin: 0 0 4px 0;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            background-color: #f1f5f9;
+        }
+
+        .nav-link::after {
+            background-color: var(--primary-color);
+        }
+
+        .input-group {
+            max-width: 100%;
+            margin: 0.75rem 0;
+        }
+
+        .btn-outline-light {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            width: 100%;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .btn-outline-light:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    }
+
+    /* 动画效果增强 */
+    .navbar-toggler {
+        border: none;
+        color: white !important;
+        padding: 0.5rem;
+        transition: var(--transition);
+    }
+
+    .navbar-toggler:hover {
+        transform: rotate(90deg);
+    }
+
+    .bi {
+        transition: var(--transition);
+    }
+
+    .nav-link:hover .bi,
+    .dropdown-item:hover .bi {
+        transform: scale(1.2);
+    }
+
+    /* 搜索动画 */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .spinning {
+        animation: spin 1s linear infinite;
     }
 </style>
 
@@ -97,10 +289,10 @@
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
-                <i class="bi bi-mortarboard-fill me-2"></i> 考研择校系统
+                <i class="bi bi-mortarboard-fill"></i> 考研择校系统
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -109,17 +301,17 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">
-                            <i class="bi bi-house-fill me-1"></i> 首页
+                            <i class="bi bi-house-fill"></i> 首页
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'ai-recommendation' in request.path %}active{% endif %}" href="{% url 'ai_recommendation_form' %}">
-                            <i class="bi bi-magic me-1"></i> AI择校系统
+                            <i class="bi bi-magic"></i> AI择校系统
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {% if 'school' in request.path %}active{% endif %}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-building me-1"></i> 院校库
+                            <i class="bi bi-building"></i> 院校库
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{% url 'school_list' %}">全部院校</a></li>
@@ -131,20 +323,24 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'student' in request.path %}active{% endif %}" href="{% url 'student_list' %}">
-                            <i class="bi bi-people me-1"></i> 学生管理
+                            <i class="bi bi-people"></i> 学生管理
                         </a>
                     </li>
                 </ul>
                 <!-- 搜索框 + 语音输入 -->
                 <form class="d-flex align-items-center" onsubmit="return false;">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="搜索..." id="searchInput">
-                        <button class="btn btn-light" type="button" id="voiceBtn"><i class="bi bi-mic"></i></button>
-                        <button class="btn btn-light" type="button" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="搜索院校、专业..." id="searchInput">
+                        <button class="btn" type="button" id="voiceBtn" title="语音搜索">
+                            <i class="bi bi-mic"></i>
+                        </button>
+                        <button class="btn" type="button" id="searchBtn" title="搜索">
+                            <i class="bi bi-search"></i>
+                        </button>
                     </div>
                 </form>
-                <a href="#" class="btn btn-outline-light btn-sm ms-2">
-                    <i class="bi bi-person-circle me-1"></i> 登录/注册
+                <a href="#" class="btn btn-outline-light ms-2">
+                    <i class="bi bi-person-circle"></i> 登录/注册
                 </a>
             </div>
         </div>
@@ -156,8 +352,38 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
     <!-- 语音识别 JS -->
     <script>
+        // 确保图标字体加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查图标是否加载成功
+            const testIcon = document.createElement('i');
+            testIcon.className = 'bi bi-building';
+            document.body.appendChild(testIcon);
+            
+            // 如果图标无法显示，尝试重新加载图标库
+            if (window.getComputedStyle(testIcon).fontFamily !== '"bootstrap-icons"') {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css';
+                document.head.appendChild(link);
+            }
+            
+            document.body.removeChild(testIcon);
+        });
+
+        // 滚动时导航栏样式变化
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 语音识别功能
         const voiceBtn = document.getElementById('voiceBtn');
         const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
 
         if ('webkitSpeechRecognition' in window) {
             const recognition = new webkitSpeechRecognition();
@@ -166,15 +392,65 @@
             recognition.interimResults = false;
 
             voiceBtn.addEventListener('click', () => {
+                // 语音按钮动画
+                voiceBtn.classList.add('btn-primary');
+                voiceBtn.querySelector('i').classList.add('bi-mic-fill');
+                
                 recognition.start();
+                searchInput.placeholder = "正在聆听...";
             });
 
             recognition.onresult = (event) => {
+                resetVoiceButton();
                 const transcript = event.results[0][0].transcript;
                 searchInput.value = transcript;
+                
+                // 自动搜索
+                setTimeout(() => {
+                    performSearch();
+                }, 500);
             };
+
+            recognition.onerror = () => {
+                resetVoiceButton();
+                searchInput.placeholder = "语音识别失败，请重试";
+            };
+
+            recognition.onend = () => {
+                if (!searchInput.value) {
+                    resetVoiceButton();
+                    searchInput.placeholder = "搜索院校、专业...";
+                }
+            };
+
+            function resetVoiceButton() {
+                voiceBtn.classList.remove('btn-primary');
+                voiceBtn.querySelector('i').classList.remove('bi-mic-fill');
+            }
         } else {
-            voiceBtn.style.display = 'none'; // 如果浏览器不支持则隐藏
+            voiceBtn.style.display = 'none'; // 不支持则隐藏
+        }
+
+        // 搜索功能
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // 搜索动画效果
+                searchBtn.querySelector('i').classList.add('bi-arrow-clockwise', 'spinning');
+                
+                // 模拟搜索请求
+                setTimeout(() => {
+                    searchBtn.querySelector('i').classList.remove('bi-arrow-clockwise', 'spinning');
+                    alert(`搜索内容: ${query}\n(实际项目中会跳转到搜索结果页)`);
+                }, 800);
+            }
         }
     </script>
 </body>

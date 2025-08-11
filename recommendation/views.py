@@ -348,6 +348,3 @@ def ai_recommendation_form(request):
         'form': form,
         'exam_years': exam_years,
     })
-
-    from django.http import JsonResponse
-from django.http import JsonResponse
